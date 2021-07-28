@@ -1,7 +1,15 @@
 <template>
-    <div v-for="cat in categories">
-        <span><router-link to="/questions">{{cat}}</router-link></span><br/>
-<!--        html.append("<a href=\"html?cat="+cat+"\" style=\"color:#999933\" >"+cat+"</a>,"+setTab(1));-->
+    <div class="row">
+        <div v-for="section in sections">
+            <span @click="showCategories(section)" class="section">{{section.name}}</span>&emsp;
+
+        </div>
+        <ul class="nav nav-tabs span2 row">
+            <li v-for="cat in categories">
+                <router-link to="/questions">{{cat.name}}</router-link>
+            </li>
+            <br/>
+        </ul>
     </div>
 </template>
 
@@ -10,7 +18,8 @@
         name: "Category",
         data() {
             return {
-                categories: []
+                categories: [],
+                sections: []
             }
         },
         created() {
@@ -18,16 +27,21 @@
         },
         methods: {
             loadCategories: function () {
-                axios
+                this.axios
                     .get(this.$store.state.API + '/categories')
                     .then(response => {
-                        this.categories = response.data;
+                        this.sections = response.data;
                     });
+            },
+            showCategories: function (section) {
+                this.categories = section.categories
             },
         }
     }
 </script>
 
 <style scoped>
-
+    .section{
+        cursor: pointer;
+    }
 </style>
