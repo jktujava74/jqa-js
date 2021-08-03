@@ -4,9 +4,9 @@
             <span @click="showCategories(section)" class="section">{{section.name}}</span>&emsp;
 
         </div>
-        <ul class="nav nav-tabs span2 row">
+        <ul>
             <li v-for="cat in categories">
-                <router-link to="/questions">{{cat.name}}</router-link>
+                <router-link :to="'/questions/' + cat.id">{{cat.name}}</router-link>
             </li>
             <br/>
         </ul>
