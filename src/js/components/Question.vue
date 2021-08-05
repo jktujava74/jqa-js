@@ -3,7 +3,7 @@
         <table border="0" width="100%" cellpadding="5">
             <tr v-for="question in questions">
                 <span class="number">{{question.id}}:</span><br/>
-                <span class="question" v-html="question.question"></span><br/>
+                <span class="question" v-html="question.question"></span>
 
                 <!--        <textarea rows="5" cols="30" name="result_"+q.getId()+"" id="result_"+q.getId()+""></textarea>-->
                 <!--                        <select class="select" id="sel_"+q.getId()+"">-->
@@ -13,12 +13,16 @@
                 <!--                            <option value="exception">exception</option>-->
                 <!--                        </select>-->
                 <!--                        <input type="button" value="apply" id="choise_"+q.getId()+"" />-->
-                <input v-show="!is_show_result" type='text' v-model="question.supposed_answer"/><br/>
+                <div v-if="!is_show_result">
+                     <input type='text' v-model="question.supposed_answer"/>
+                </div>
 
-                <span v-show="is_show_result && !question.pass" class="question" v-html="question.supposed_answer"></span><br/>
-                <span v-show="is_show_result && !question.pass" class="question" v-html="question.answer"></span><br/>
-
-                <span v-show="is_show_result && question.pass" class="success">sucess</span><br/>
+                <div v-if="is_show_result">
+                    <div v-if="!question.pass" class="question answer_wrong" v-html="question.supposed_answer"></div>
+                    <div v-if="!question.pass" class="question answer_correct" v-html="question.answer"></div>
+                    <div v-if="!question.pass" class="question note" v-html="question.note"></div>
+                    <div v-if="question.pass" class="success">sucess</div>
+                </div>
                 <hr/>
             </tr>
         </table>
@@ -45,6 +49,8 @@
                     .get(this.$store.state.API + '/questions/' + this.$route.params.id)
                     .then(response => {
                         this.questions = response.data;
+                        this.is_show_result = false
+                        this.answer = new Map()
                     });
             },
             loadResult: function () {
@@ -86,8 +92,19 @@
         font-weight: bold;
     }
 
+    .answer_wrong {
+        color: red;
+    }
+
+    .answer_correct {
+        color: forestgreen;
+    }
+    .note {
+        color: blue;
+    }
+
     .question {
-        font-size: 14px;
+        font-size: 15 px;
         font-family: "Times New Roman";
     }
 </style>
