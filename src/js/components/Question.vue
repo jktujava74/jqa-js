@@ -26,7 +26,8 @@
                 <hr/>
             </tr>
         </table>
-        <input type='button' @click="loadResult()" value="Ответить"/>
+        <input v-if="!is_show_result" type='button' @click="loadResult()" value="Ответить"/>
+        <span v-if="is_show_result"  class="success">passed = {{result_percent}}</span>
     </div>
 </template>
 
@@ -37,7 +38,8 @@
             return {
                 questions: [],
                 answer: new Map(),
-                is_show_result: false
+                is_show_result: false,
+                result_percent: 0
             }
         },
         created() {
@@ -70,6 +72,12 @@
                             const o = questionsById.get(Number(e[0]));
                             o.pass = e[1]
                         }
+
+                        const passed_count_2 = Array.from(result.values())
+
+                        const passed_count = Array.from(result.values()).filter(val => val == true).length
+                        this.result_percent = result_percent_calc(this.questions.length, passed_count)
+
                         this.is_show_result = true
                     });
             },
@@ -78,6 +86,10 @@
             // при изменениях маршрута запрашиваем данные снова
             $route: 'loadQuestions'
         },
+    }
+
+    function result_percent_calc(question_count, passed_count){
+        return ((passed_count / question_count) * 100).toFixed(1);
     }
 </script>
 
