@@ -4,12 +4,25 @@
             <span @click="showCategories(section)" class="section">{{section.name}}</span>&emsp;
 
         </div>
-        <ul>
-            <li v-for="cat in categories">
-                <router-link :to="'/questions/' + cat.id">{{cat.name}}</router-link>
-            </li>
-            <br/>
-        </ul>
+        <div v-if="!test_mode">
+            <span>qa</span>
+            <ul>
+                <li v-for="cat in categories">
+                    <router-link :to="'/questions/' + cat.id">{{cat.name}}</router-link>
+                </li>
+                <br/>
+            </ul>
+        </div>
+        <div v-if="test_mode">
+            <span>test</span>
+            <ul>
+                <li v-for="cat in categories">
+                    <router-link :to="'/test/' + cat.id">{{cat.name}}</router-link>
+                </li>
+                <br/>
+            </ul>
+        </div>
+
     </div>
 </template>
 
@@ -19,7 +32,8 @@
         data() {
             return {
                 categories: [],
-                sections: []
+                sections: [],
+                test_mode: false
             }
         },
         created() {
