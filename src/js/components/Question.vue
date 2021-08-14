@@ -5,29 +5,15 @@
                 <span class="number">{{question.id}}:</span><br/>
                 <span class="question" v-html="question.question"></span>
 
-                <!--        <textarea rows="5" cols="30" name="result_"+q.getId()+"" id="result_"+q.getId()+""></textarea>-->
-                <!--                        <select class="select" id="sel_"+q.getId()+"">-->
-                <!--                            <option value="true">true</option>-->
-                <!--                            <option value="false">false</option>-->
-                <!--                            <option value="not compile">not compile</option>-->
-                <!--                            <option value="exception">exception</option>-->
-                <!--                        </select>-->
-                <!--                        <input type="button" value="apply" id="choise_"+q.getId()+"" />-->
-                <div v-if="!is_show_result">
-                     <input type='text' v-model="question.supposed_answer"/>
-                </div>
-
-                <div v-if="is_show_result">
-                    <div v-if="!question.pass" class="question answer_wrong" v-html="question.supposed_answer"></div>
-                    <div v-if="!question.pass" class="question answer_correct" v-html="question.answer"></div>
-                    <div v-if="!question.pass" class="question note" v-html="question.note"></div>
-                    <div v-if="question.pass" class="success">sucess</div>
+                <div class="custom-control custom-switch">
+                    <input type="checkbox" class="custom-control-input" :id="question.id" v-model="question.pass">
+                    <label class="custom-control-label" :for="question.id">passed</label>
                 </div>
                 <hr/>
             </tr>
         </table>
-        <input v-if="!is_show_result" type='button' @click="loadResult()" value="Ответить"/>
-        <span v-if="is_show_result"  class="success">passed = {{result_percent}}</span>
+        <input v-if="!isAnswered" type='button' @click="updatePassing()" value="Ответить"/>
+        <span v-if="isAnswered" class="success">Ответ отправлен</span>
     </div>
 </template>
 
@@ -38,8 +24,7 @@
             return {
                 questions: [],
                 answer: new Map(),
-                is_show_result: false,
-                result_percent: 0
+                isAnswered: false
             }
         },
         created() {
@@ -51,34 +36,19 @@
                     .get(this.$store.state.API + '/questions/' + this.$route.params.id)
                     .then(response => {
                         this.questions = response.data;
-                        this.is_show_result = false
                         this.answer = new Map()
+                        this.isAnswered = false
                     });
             },
-            loadResult: function () {
+            updatePassing: function () {
                 for (const q of this.questions) {
-                    this.answer.set(q.id, q.supposed_answer)
+                    this.answer.set(q.id, q.pass)
                 }
 
                 this.axios
-                    .post(this.$store.state.API + '/answer/', Object.fromEntries(this.answer))
+                    .post(this.$store.state.API + '/updatePassing/', Object.fromEntries(this.answer))
                     .then(response => {
-                        const result = new Map(Object.entries(response.data))
-
-                        const questionsById = new Map();
-                        this.questions.forEach(it => questionsById.set(it.id, it))
-
-                        for(const e of result.entries()){
-                            const o = questionsById.get(Number(e[0]));
-                            o.pass = e[1]
-                        }
-
-                        const passed_count_2 = Array.from(result.values())
-
-                        const passed_count = Array.from(result.values()).filter(val => val == true).length
-                        this.result_percent = result_percent_calc(this.questions.length, passed_count)
-
-                        this.is_show_result = true
+                        this.isAnswered = true
                     });
             },
         },
@@ -86,10 +56,6 @@
             // при изменениях маршрута запрашиваем данные снова
             $route: 'loadQuestions'
         },
-    }
-
-    function result_percent_calc(question_count, passed_count){
-        return ((passed_count / question_count) * 100).toFixed(1);
     }
 </script>
 

@@ -73,8 +73,6 @@
                             o.pass = e[1]
                         }
 
-                        const passed_count_2 = Array.from(result.values())
-
                         const passed_count = Array.from(result.values()).filter(val => val == true).length
                         this.result_percent = result_percent_calc(this.questions.length, passed_count)
 

@@ -1,11 +1,23 @@
 <template>
-    <div class="row">
-        <div v-for="section in sections">
-            <span @click="showCategories(section)" class="section">{{section.name}}</span>&emsp;
-
+    <div class="container">
+        <div class="row border">
+            <div v-for="section in sections">
+                <span @click="showCategories(section)" class="section">{{section.name}}</span>&emsp;
+            </div>
         </div>
-        <div v-if="!test_mode">
-            <span>qa</span>
+        <div class="row">
+            <div class="col">
+                <div class="row">
+                    <input class="form-check-input" type="radio" id="one" value="qa" v-model="mode" checked>
+                    <label class="form-check-label" for="one">qa</label>
+                </div>
+                <div class="row">
+                    <input class="form-check-input" type="radio" id="two" value="test" v-model="mode">
+                    <label class="form-check-label" for="two">test</label>
+                </div>
+            </div>
+        </div>
+        <div v-if="mode == 'qa'">
             <ul>
                 <li v-for="cat in categories">
                     <router-link :to="'/questions/' + cat.id">{{cat.name}}</router-link>
@@ -13,8 +25,7 @@
                 <br/>
             </ul>
         </div>
-        <div v-if="test_mode">
-            <span>test</span>
+        <div v-if="mode == 'test'">
             <ul>
                 <li v-for="cat in categories">
                     <router-link :to="'/test/' + cat.id">{{cat.name}}</router-link>
@@ -22,7 +33,6 @@
                 <br/>
             </ul>
         </div>
-
     </div>
 </template>
 
@@ -33,7 +43,7 @@
             return {
                 categories: [],
                 sections: [],
-                test_mode: false
+                mode: "qa"
             }
         },
         created() {
