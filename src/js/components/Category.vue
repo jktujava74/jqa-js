@@ -58,6 +58,9 @@
                     });
             },
             showCategories: function (section) {
+                localStorage.section = section;
+                localStorage.categories = this.categories;
+
                 this.categories = section.categories
             },
         }
