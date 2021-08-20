@@ -7,13 +7,9 @@
             <tr>
                 <td>
                     <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" v-model="question.categoryId">
-<!--                        <option disabled selected>Category...</option>-->
-<!--                        <option value="1">One</option>-->
-<!--                        <option value="2">Two</option>-->
-<!--                        <option value="3">Three</option>-->
-                        <div v-for="cat in categories">
-                            <option ::value=cat.id>{{cat.name}}</option>
-                        </div>
+                        <option v-for="cat in categories" v-bind:value="cat.id">
+                            {{ cat.name }}
+                        </option>
                     </select>
                 </td>
             </tr>
@@ -38,16 +34,16 @@
                 },
             }
         },
-        mounted() {
+        created() {
             if (localStorage.section) {
                 this.section = localStorage.section;
-                this.categories = localStorage.categories;
+                this.categories = JSON.parse(localStorage.categories);
             }
         },
         methods: {
             create: function () {
                 // this.pet.userId = localStorage.userId;
-                axios
+                this.axios
                     .post(this.$store.state.API + '/qa', this.question)
                     .then(response => {
                     });

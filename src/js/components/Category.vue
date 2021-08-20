@@ -58,10 +58,13 @@
                     });
             },
             showCategories: function (section) {
-                localStorage.section = section;
-                localStorage.categories = this.categories;
-
                 this.categories = section.categories
+
+                localStorage.section = section.name;
+
+                localStorage.categories = JSON.stringify(this.categories);
+                console.log("section = "+ localStorage.section)
+                console.log("categories = "+ localStorage.categories)
             },
         }
     }
