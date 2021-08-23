@@ -18,6 +18,7 @@
             </tr>
         </table>
         <input type="button" @click='create()' value="создать"/>
+        <span v-if="is_inserted">question was added</span>
     </div>
 </template>
 
@@ -30,8 +31,10 @@
                 categories: [],
                 question: {
                     type: 'QUESTION',
-                    categoryId: ''
+                    categoryId: '',
+                    question: '',
                 },
+                is_inserted: false
             }
         },
         created() {
@@ -46,6 +49,12 @@
                 this.axios
                     .post(this.$store.state.API + '/qa', this.question)
                     .then(response => {
+                        var question_id = response.data;
+                        if(Number.isInteger(question_id)){
+                            this.is_inserted = true;
+                            this.question.categoryId = '';
+                            this.question.question = '';
+                        }
                     });
             }
         }
